@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Showdown: Healthy vs. Junk Food</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            /* Vibrant food-themed background with dynamic SVG pattern */
+            background-color: #1a3628;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(46, 204, 113, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(231, 76, 60, 0.2) 0%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 100 100'%3E%3Cg fill='%232ecc71' fill-opacity='0.08'%3E%3Cpath d='M30 20 c 5 -10, 15 -10, 20 0 c 10 5, 10 15, 0 20 c -5 10, -15 10, -20 0 c -10 -5, -10 -15, 0 -20 Z'/%3E%3Cpath d='M75 65 c2-6 8-8 12-4 c5 5 2 12-4 14 c-6 2-11-2-11-6 z'/%3E%3Ccircle cx='20' cy='70' r='6'/%3E%3Cpath d='M65 25 l5 -10 l5 10 z'/%3E%3C/g%3E%3C/svg%3E");
+            background-attachment: fixed;
+            margin: 0;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Enlarged Game Card Container */
+        .game-card {
+            background-color: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+            width: 95%;
+            max-width: 900px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 2.2rem;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        /* Start Screen Styles */
+        .start-screen {
+            display: block;
+        }
+
+        .input-group {
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+
+        .name-input {
+            padding: 14px 18px;
+            font-size: 1.1rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            outline: none;
+            width: 100%;
+        }
+
+        .name-input:focus {
+            border-color: #3498db;
+        }
+
+        /* Difficulty Selector Styling */
+        .difficulty-options {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+
+        .diff-btn {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #bdc3c7;
+            background-color: #ffffff;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #7f8c8d;
+        }
+
+        .diff-btn.selected[data-mode="easy"] {
+            background-color: #2ecc71;
+            border-color: #27ae60;
+            color: white;
+        }
+
+        .diff-btn.selected[data-mode="medium"] {
+            background-color: #f39c12;
+            border-color: #d35400;
+            color: white;
+        }
+
+        .diff-btn.selected[data-mode="hard"] {
+            background-color: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+        }
+
+        .start-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 10px;
+        }
+
+        .start-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .objectives-box {
+            background-color: #f8f9fa;
+            border: 1px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            color: #34495e;
+            text-align: left;
+        }
+
+        .objectives-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .objectives-box ul {
+            margin: 0;
+            padding-left: 20px;
+            line-height: 1.5;
+        }
+
+        /* Game Interface Styles */
+        .quiz-container {
+            display: none;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #eef2f5;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #34495e;
+            margin-bottom: 25px;
+        }
+
+        .timer-badge {
+            background-color: #e74c3c;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 15px;
+            font-size: 1.05rem;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        button.btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button.btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        button.btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .explanation {
+            background-color: #eef9f5;
+            border-left: 5px solid #2ecc71;
+            padding: 16px;
+            border-radius: 6px;
+            color: #27ae60;
+            text-align: left;
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .next-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            display: none;
+            margin: 0 auto;
+        }
+
+        .next-btn:hover {
+            background-color: #27ae60;
+        }
+
+        /* Results Screen Styles */
+        .results-container {
+            display: none;
+        }
+
+        .leaderboard {
+            background-color: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            text-align: left;
+        }
+
+        .leaderboard h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .leaderboard-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid #edf2f7;
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-item span.rank {
+            font-weight: bold;
+            color: #e67e22;
+        }
+
+        .restart-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .restart-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .credits-footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+            font-size: 0.85rem;
+            color: #95a5a6;
+        }
+
+        /* Styling para sa pinalaking pangalan ng Developer */
+        .developer-name {
+            font-size: 50px;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+            color: #2c3e50;
+            line-height: 1.1;
+        }
+
+        /* Responsive collapse for small screen heights */
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .developer-name {
+                font-size: 32px; /* Ino-optimize sa mobile para hindi lumagpas */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-card">
+        <h1>Nutrition Showdown</h1>
+        <p class="subtitle">Test your knowledge on Healthy vs. Junk Foods!</p>
+
+        <div id="start-screen" class="start-screen">
+            <div class="objectives-box">
+                <h3>Objectives:</h3>
+                <ul>
+                    <li>Answer each question within the selected speed timer.</li>
+                    <li>Distinguish between high-nutrient foods and ultra-processed junk foods.</li>
+                    <li>Earn points to land a top spot on the <strong>Top 5 Leaderboard</strong>!</li>
+                </ul>
+            </div>
+
+            <div class="input-group">
+                <label for="player-name">Enter Your Name:</label>
+                <input type="text" id="player-name" class="name-input" placeholder="e.g. Alex" maxlength="15">
+            </div>
+
+            <div class="input-group">
+                <label>Select Difficulty Mode:</label>
+                <div class="difficulty-options">
+                    <button class="diff-btn" data-mode="easy" onclick="setDifficulty('easy')">Easy (10s)</button>
+                    <button class="diff-btn selected" data-mode="medium" onclick="setDifficulty('medium')">Medium (5s)</button>
+                    <button class="diff-btn" data-mode="hard" onclick="setDifficulty('hard')">Hard (3s)</button>
+                </div>
+            </div>
+
+            <button class="start-btn" onclick="startGame()">Start Game</button>
+
+            <div class="credits-footer">
+                <strong>Credits:</strong> Web Developer: 
+                <span class="developer-name">Jae Ian I. Java</span>
+                Educational Content Based on Health & Dietary Guidelines
+            </div>
+        </div>
+
+        <div id="quiz-box" class="quiz-container">
+            <div class="score-board">
+                <span id="question-tracker">Question 1 of 5</span>
+                <span id="timer-tracker" class="timer-badge">Time: 5s</span>
+                <span id="score-tracker">Score: 0</span>
+            </div>
+
+            <div id="question-text" class="question-text">Loading question...</div>
+
+            <div id="options-grid" class="options-grid"></div>
+
+            <div id="explanation" class="explanation"></div>
+
+            <button id="next-btn" class="next-btn" onclick="nextQuestion()">Next Question</button>
+        </div>
+
+        <div id="results-box" class="results-container">
+            <h2>Game Over!</h2>
+            <p id="final-score" style="font-size: 1.4rem; color: #2c3e50;"></p>
+            <p id="performance-feedback" style="color: #7f8c8d; font-size: 1.1rem;"></p>
+
+            <div class="leaderboard">
+                <h3>Top 5 Players</h3>
+                <ul id="leaderboard-list" class="leaderboard-list"></ul>
+            </div>
+
+            <button class="restart-btn" onclick="restartGame()">Play Again</button>
+
+            <div class="credits-footer">
+                <strong>Credits:</strong> Web Developer: 
+                <span class="developer-name">Jae Ian I. Java</span>
+                Educational Content Based on Health & Dietary Guidelines
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Expanded Master Questions Pool (15 Unique Questions)
+        const masterQuestions = [
+            {
+                question: "Which of these snacks provides long-lasting energy without a sugar crash?",
+                options: ["Potato Chips", "Apple with Almond Butter", "Candy Bar", "Soda"],
+                correct: 1,
+                explanation: "Apples contain dietary fiber and almond butter provides healthy fats/protein, leading to stable energy release rather than a quick sugar spike."
+            },
+            {
+                question: "What type of fat is considered healthiest for your heart?",
+                options: ["Trans Fats", "Saturated Fats", "Unsaturated Fats", "Hydrogenated Fats"],
+                correct: 2,
+                explanation: "Unsaturated fats (found in avocados, nuts, and olive oil) help improve blood cholesterol levels and support heart health."
+            },
+            {
+                question: "Why are ultra-processed junk foods often easy to overeat?",
+                options: ["They contain too much fiber", "They are high in sugar, fat, & salt", "They cost too much", "They take long to digest"],
+                correct: 1,
+                explanation: "The combination of high sugar, salt, and fat triggers the brain's reward center, making processed foods highly palatable and easy to overconsume."
+            },
+            {
+                question: "Which drink is best for everyday hydration?",
+                options: ["Fruit Juice Box", "Water", "Sports Drinks", "Energy Drinks"],
+                correct: 1,
+                explanation: "Water hydrates your body perfectly without added sugars, calories, or artificial additives."
+            },
+            {
+                question: "What key component in whole foods helps support healthy digestion?",
+                options: ["Dietary Fiber", "High Sodium", "Refined Flour", "Saturated Fat"],
+                correct: 0,
+                explanation: "Dietary fiber (found in vegetables, fruits, whole grains, and legumes) keeps your digestive system running smoothly and keeps you feeling full longer."
+            },
+            {
+                question: "Which option represents a complex carbohydrate with steady energy?",
+                options: ["White Bread", "Oatmeal", "Glazed Donut", "Cotton Candy"],
+                correct: 1,
+                explanation: "Oatmeal is rich in complex carbohydrates and soluble fiber, digesting slowly and keeping your blood sugar stable."
+            },
+            {
+                question: "Why can drinking sugary sodas lead to rapid weight gain and energy dips?",
+                options: ["They contain no calories", "They contain empty calories without satiety", "They contain high amounts of protein", "They slow down your heartbeat"],
+                correct: 1,
+                explanation: "Sugary drinks provide large amounts of sugar without fiber or protein, so they don't make you feel full and lead to rapid spikes and crashes in blood sugar."
+            },
+            {
+                question: "Which of these foods is naturally rich in Vitamin C and antioxidants?",
+                options: ["French Fries", "Bell Peppers", "White Rice", "Fried Chicken"],
+                correct: 1,
+                explanation: "Bell peppers are packed with Vitamin C and cellular-protecting antioxidants."
+            },
+            {
+                question: "What is a hidden risk of consuming too much sodium from fast food?",
+                options: ["Stronger bones", "Higher risk of high blood pressure", "Better sleep", "Improved hydration"],
+                correct: 1,
+                explanation: "Excess sodium causes the body to retain water, placing extra strain on blood vessels and increasing blood pressure."
+            },
+            {
+                question: "Which breakfast option provides a balanced combination of protein and fiber?",
+                options: ["Sugary Cereal with Whole Milk", "Greek Yogurt with Berries & Seeds", "Chocolate Pastry", "Energy Drink and Toast"],
+                correct: 1,
+                explanation: "Greek yogurt provides high-quality protein while berries and seeds contribute fiber and healthy micronutrients."
+            },
+            {
+                question: "What happens when wheat is refined to make white flour for junk snacks?",
+                options: ["It gains more vitamins", "The nutrient-rich bran and germ are removed", "It becomes higher in fiber", "It gets natural protein added"],
+                correct: 1,
+                explanation: "Refining grains strips away the outer bran and germ layers, removing most of the essential fiber, vitamins, and minerals."
+            },
+            {
+                question: "Which source provides healthy Omega-3 fatty acids?",
+                options: ["Deep-fried chicken nuggets", "Salmon and Walnuts", "Margarine", "Potato Chips"],
+                correct: 1,
+                explanation: "Salmon, walnuts, chia seeds, and flaxseeds are excellent natural sources of heart-healthy Omega-3 fatty acids."
+            },
+            {
+                question: "Why are artificial trans fats harmful to health?",
+                options: ["They raise LDL ('bad') cholesterol and lower HDL", "They contain too many vitamins", "They digest too quickly", "They cause immediate sleepiness"],
+                correct: 0,
+                explanation: "Trans fats increase bad cholesterol (LDL) while lowering good cholesterol (HDL), significantly increasing heart disease risk."
+            },
+            {
+                question: "Which habit helps you recognize when you are actually full?",
+                options: ["Eating as fast as possible", "Eating while watching TV", "Mindful eating and chewing slowly", "Skipping meals all day"],
+                correct: 2,
+                explanation: "It takes about 20 minutes for satiety signals to reach your brain, so chewing slowly helps prevent overeating."
+            },
+            {
+                question: "Which item is considered a high-quality plant-based protein?",
+                options: ["Lentils and Chickpeas", "White Sugar", "Cornstarch", "Potato Starch"],
+                correct: 0,
+                explanation: "Legumes like lentils and chickpeas are rich in plant-based protein, iron, and dietary fiber."
+            }
+        ];
+
+        const QUESTIONS_PER_GAME = 5;
+        let activeQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedDifficulty = 'medium';
+        let difficultyTimers = { easy: 10, medium: 5, hard: 3 };
+        let timeLeft = 5;
+        let timerInterval = null;
+        let currentPlayerName = "Anonymous Player";
+
+        const startScreen = document.getElementById("start-screen");
+        const quizBox = document.getElementById("quiz-box");
+        const resultsBox = document.getElementById("results-box");
+        const playerNameInput = document.getElementById("player-name");
+        
+        const questionTracker = document.getElementById("question-tracker");
+        const timerTracker = document.getElementById("timer-tracker");
+        const scoreTracker = document.getElementById("score-tracker");
+        const questionText = document.getElementById("question-text");
+        const optionsGrid = document.getElementById("options-grid");
+        const explanationBox = document.getElementById("explanation");
+        const nextBtn = document.getElementById("next-btn");
+        const finalScore = document.getElementById("final-score");
+        const performanceFeedback = document.getElementById("performance-feedback");
+        const leaderboardList = document.getElementById("leaderboard-list");
+
+        function setDifficulty(mode) {
+            selectedDifficulty = mode;
+            const buttons = document.querySelectorAll('.diff-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('data-mode') === mode) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+        }
+
+        // Helper function to shuffle any array randomly
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Prepares randomized questions and options from the master pool
+        function prepareRandomizedQuestions() {
+            const shuffledQ = shuffleArray(masterQuestions).slice(0, QUESTIONS_PER_GAME);
+
+            activeQuestions = shuffledQ.map(q => {
+                const originalCorrectText = q.options[q.correct];
+                const shuffledOptions = shuffleArray(q.options);
+                const newCorrectIndex = shuffledOptions.indexOf(originalCorrectText);
+
+                return {
+                    question: q.question,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex,
+                    explanation: q.explanation
+                };
+            });
+        }
+
+        function startGame() {
+            const inputVal = playerNameInput.value.trim();
+            if (inputVal !== "") {
+                currentPlayerName = inputVal;
+            }
+            
+            prepareRandomizedQuestions();
+            startScreen.style.display = "none";
+            quizBox.style.display = "block";
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            scoreTracker.innerText = `Score: 0`;
+            loadQuestion();
+        }
+
+        function startTimer() {
+            timeLeft = difficultyTimers[selectedDifficulty];
+            timerTracker.innerText = `Time: ${timeLeft}s`;
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerTracker.innerText = `Time: ${timeLeft}s`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            const current = activeQuestions[currentQuestionIndex];
+            
+            questionTracker.innerText = `Question ${currentQuestionIndex + 1} of ${activeQuestions.length}`;
+            questionText.innerText = current.question;
+            
+            optionsGrid.innerHTML = "";
+            explanationBox.style.display = "none";
+            nextBtn.style.display = "none";
+
+            current.options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.classList.add("btn");
+                button.innerText = option;
+                button.onclick = () => selectOption(index);
+                optionsGrid.appendChild(button);
+            });
+
+            startTimer();
+        }
+
+        function handleTimeout() {
+            const current = activeQuestions[currentQuestionIndex];
+            const buttons = optionsGrid.children;
+
+            for (let btn of buttons) {
+                btn.disabled = true;
+            }
+
+            buttons[current.correct].style.backgroundColor = "#2ecc71";
+
+            explanationBox.innerHTML = `<strong>Time's up!</strong><br>${current.explanation}`;
+            explanationBox.style.borderColor = "#e74c3c";
+            explanationBox.style.color = "#c0392b";
+            explanationBox.style.display = "block";
+
+            showNextButton();
+        }
+
+        function selectOption(selectedIndex) {
+            clearInterval(timerInterval);
+            const current = activeQuestions[currentQuestionIndex];
+            const buttons = optionsGrid.children;
+
+            for (let btn of buttons) {
+                btn.disabled = true;
+            }
+
+            if (selectedIndex === current.correct) {
+                buttons[selectedIndex].style.backgroundColor = "#2ecc71";
+                score++;
+                scoreTracker.innerText = `Score: ${score}`;
+                explanationBox.style.borderColor = "#2ecc71";
+                explanationBox.style.color = "#27ae60";
+            } else {
+                buttons[selectedIndex].style.backgroundColor = "#e74c3c";
+                buttons[current.correct].style.backgroundColor = "#2ecc71";
+                explanationBox.style.borderColor = "#e74c3c";
+                explanationBox.style.color = "#c0392b";
+            }
+
+            explanationBox.innerText = current.explanation;
+            explanationBox.style.display = "block";
+
+            showNextButton();
+        }
+
+        function showNextButton() {
+            if (currentQuestionIndex < activeQuestions.length - 1) {
+                nextBtn.innerText = "Next Question";
+            } else {
+                nextBtn.innerText = "See Results";
+            }
+            nextBtn.style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < activeQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            quizBox.style.display = "none";
+            resultsBox.style.display = "block";
+
+            finalScore.innerText = `${currentPlayerName}, you scored ${score} out of ${activeQuestions.length}!`;
+
+            if (score === activeQuestions.length) {
+                performanceFeedback.innerText = `Lightning Fast (${selectedDifficulty.toUpperCase()} Mode)! You're a Master!`;
+            } else if (score >= 3) {
+                performanceFeedback.innerText = "Great job! Quick thinking on healthy choices!";
+            } else {
+                performanceFeedback.innerText = "Practice makes perfect! Try again for a higher score.";
+            }
+
+            saveScore();
+            updateLeaderboardUI();
+        }
+
+        function saveScore() {
+            let leaderboard = JSON.parse(localStorage.getItem("nutritionQuizLeaderboard")) || [];
+            leaderboard.push({ name: `${currentPlayerName} [${selectedDifficulty.toUpperCase()}]`, score: score });
+            
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 5);
+
+            localStorage.setItem("nutritionQuizLeaderboard", JSON.stringify(leaderboard));
+        }
+
+        function updateLeaderboardUI() {
+            const leaderboard = JSON.parse(localStorage.getItem("nutritionQuizLeaderboard")) || [];
+            leaderboardList.innerHTML = "";
+
+            if (leaderboard.length === 0) {
+                leaderboardList.innerHTML = `<li class="leaderboard-item" style="justify-content: center; color: #95a5a6;">No top scores recorded yet!</li>`;
+                return;
+            }
+
+            leaderboard.forEach((entry, index) => {
+                const li = document.createElement("li");
+                li.classList.add("leaderboard-item");
+                li.innerHTML = `<span><span class="rank">#${index + 1}</span> ${entry.name}</span> <span>${entry.score}/5</span>`;
+                leaderboardList.appendChild(li);
+            });
+        }
+
+        function restartGame() {
+            resultsBox.style.display = "none";
+            startScreen.style.display = "block";
+        }
+    </script>
+</body>
+</html>
